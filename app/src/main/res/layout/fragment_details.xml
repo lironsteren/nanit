@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_avatar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/default_place_holder_blue"/>
+
+
+        <EditText
+            android:id="@+id/txt_first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_avatar"
+            android:layout_margin="32dp"
+            android:hint="@string/hint_baby_name"
+            android:singleLine="true"
+            android:imeOptions="actionNext"
+            android:textColor="@color/medium_headline"
+            android:textColorHint="@color/nanitRed"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:id="@+id/bod_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_first_name"
+            android:layout_margin="32dp"
+
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/btn_open_birth_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/wrapper_drop_down"
+                android:drawableRight="@drawable/wrapper_drop_down"
+                android:hint="@string/hint_bod_format"
+                android:textColor="@color/medium_headline"
+                android:textColorHint="@color/nanitRed"
+                android:textSize="20sp"/>
+            <View
+                android:id="@+id/under_line_bod"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/medium_headline"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_show_birthday_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_background"
+            android:enabled="false"
+            android:text="@string/btn_show_birthday_screen"/>
+    </RelativeLayout>
+</layout>

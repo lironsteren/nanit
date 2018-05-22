@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Nanit</string>
+    <string name="hint_baby_name">Baby name</string>
+    <string name="hint_bod">Birth of date</string>
+    <string name="btn_show_birthday_screen">Show birthday screen</string>
+    <string name="hint_bod_format">dd/mm/yyyy</string>
+    <string name="error_required_field">This is a required field</string>
+    <string name="select_app">Select App</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_from_library">Choose From Library</string>
+    <string name="add_photo">Add Photo</string>
+
+
 </resources>
