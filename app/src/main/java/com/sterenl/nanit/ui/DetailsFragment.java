@@ -1,8 +1,8 @@
 package com.sterenl.nanit.ui;
 
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +27,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
@@ -35,17 +36,23 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
     private FragmentDetailsBinding mBinder;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormat.mediumDate();
     private DateTime mDob;
-    int mImageViewWidth;
-    int mXCoordinate;
-    int mYCoordinate;
     private String mUserAvatar;
     private Disposable mTextDisposable;
+    private DetailsFragment.MoveToBirthdayScreen mCallback;
+    private final double CAMERA_ICON_SCALE = (double) 307 / (double) 380;
 
+
+    public interface MoveToBirthdayScreen {
+        void moveToBirthdayScreenClick();
+    }
 
     public static DetailsFragment newInstance() {
         return new DetailsFragment();
     }
 
+    /******************************************************************************************************
+     *  life cycle method
+     ******************************************************************************************************/
 
     @Nullable
     @Override
@@ -57,6 +64,32 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
         return view;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (DetailsFragment.MoveToBirthdayScreen) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement MoveToBirthdayScreen");
+        }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mTextDisposable != null && !mTextDisposable.isDisposed()) {
+            mTextDisposable.dispose();
+        }
+    }
+
+    /******************************************************************************************************
+     *  inner logic method
+     ******************************************************************************************************/
     private void initView() {
         updateViewFromStorage();
         initBottomSheet();
@@ -69,40 +102,36 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
         });
     }
 
+
     private void updateViewFromStorage() {
         BabyModel baby = BabyDataProvider.getInstance().getBabyData(getActivity());
-        if (baby!=null){
+        if (baby != null) {
             mBinder.txtFirstName.setText(baby.getName());
-            mBinder.btnOpenBirthDate.setText(dateTimeFormatter.print(baby.getBod()));
+            mDob = baby.getBod();
+            mBinder.btnOpenBirthDate.setText(dateTimeFormatter.print(mDob));
             // because this is not mandatory fields need extra check
-            if (!TextUtils.isEmpty(baby.getAvatar())){
-                ImageFileHelper.loadAvatar(getActivity(),mBinder.imgAvatar, baby.getAvatar());
+            if (!TextUtils.isEmpty(baby.getAvatar())) {
+                mUserAvatar = baby.getAvatar();
+                ImageFileHelper.loadAvatar(getActivity(), mBinder.imgAvatar, mUserAvatar);
             }
         }
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mTextDisposable!=null &&!mTextDisposable.isDisposed()){
-            mTextDisposable.dispose();
-        }
-    }
 
-    /**
+    /****************************************************************************************
      * add camera icon into to the top right avatar icon
      * i measure the placeholder point via invision to get point so i can calculate the scale.
-     */
+     *****************************************************************************************/
+
     private void addCameraIcon(ViewTreeObserver.OnPreDrawListener listener) {
         mBinder.imgAvatar.getViewTreeObserver().removeOnPreDrawListener(listener);
-        mImageViewWidth = mBinder.imgAvatar.getMeasuredWidth();
-        mXCoordinate = mBinder.imgAvatar.getLeft();
-        mYCoordinate = mBinder.imgAvatar.getTop();
+        int mImageViewWidth = mBinder.imgAvatar.getMeasuredWidth();
+        int mXCoordinate = mBinder.imgAvatar.getLeft();
+        int mYCoordinate = mBinder.imgAvatar.getTop();
         ImageView cameraIcon = new ImageView(getActivity());
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        double scale = (double) 307 / (double) 376;
-        params.leftMargin = (int) (mXCoordinate + (mImageViewWidth * (scale)));
+        params.leftMargin = (int) (mXCoordinate + (mImageViewWidth * (CAMERA_ICON_SCALE)));
         params.topMargin = mYCoordinate;
         cameraIcon.setImageResource(R.drawable.camera_icon_blue);
         cameraIcon.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +142,6 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
         });
         mBinder.mainLayout.addView(cameraIcon, params);
     }
-
 
     private void setOnClickListener() {
         mBinder.bodLayout.setOnClickListener(this);
@@ -131,8 +159,11 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
                     mBinder.btnShowBirthdayScreen.setEnabled(false);
                 }
             }
+
             @Override
-            public void onError(Throwable e) { }
+            public void onError(Throwable e) {
+            }
+
             @Override
             public void onComplete() {
             }
@@ -145,6 +176,7 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
         babyDetails.setName(mBinder.txtFirstName.getText().toString());
         babyDetails.setAvatar(mUserAvatar);
         BabyDataProvider.getInstance().SaveBabyData(babyDetails, getActivity());
+        mCallback.moveToBirthdayScreenClick();
     }
 
     private void openCalender() {
@@ -157,6 +189,10 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
         });
     }
 
+
+    /******************************************************************************************************
+     *  overrides  method
+     ******************************************************************************************************/
     @Override
     void loadAvatar(String userAvatar) {
         mUserAvatar = userAvatar;
@@ -180,6 +216,5 @@ public class DetailsFragment extends BaseCameraFragment implements View.OnClickL
                 break;
         }
     }
-
 
 }

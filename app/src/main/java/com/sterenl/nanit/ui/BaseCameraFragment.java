@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.FileProvider;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,7 +24,9 @@ import com.sterenl.nanit.utiles.PermissionManager;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-
+/**
+ *  Base class for all fragment that use camera and gallery intents
+ */
 public abstract class BaseCameraFragment extends android.support.v4.app.Fragment implements BirthdayContract.BirthdayView, View.OnClickListener {
     private BottomSheetBehavior bottomSheetBehaviorAddPhoto;
     private BottomSheetDialog bottomSheetDialogAddPhoto;
@@ -81,7 +84,6 @@ public abstract class BaseCameraFragment extends android.support.v4.app.Fragment
             mPermissionManager.requestStoragePermission(this);
         } else {
             mPresenter.selectPhotoRequested();
-
         }
     }
 
@@ -200,5 +202,15 @@ public abstract class BaseCameraFragment extends android.support.v4.app.Fragment
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -8,6 +8,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sterenl.nanit.Constants;
 
+/**
+ *  This class handle all the save and restore baby data
+ */
 public class BabyDataProvider {
     private static BabyDataProvider mInstance;
 
@@ -37,4 +40,16 @@ public class BabyDataProvider {
         }
         return null;
     }
+    public void updateUserAvatar(Context context, String avatar){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.BABY_PREF_TYPE, Context.MODE_PRIVATE);
+        Gson gson = Converters.registerDateTime(new GsonBuilder()).create();
+        String json = prefs.getString(Constants.BABY_DATA, null);
+        BabyModel baby =  gson.fromJson(json, BabyModel.class);
+        baby.setAvatar(avatar);
+        SharedPreferences.Editor edit = context
+                .getSharedPreferences(Constants.BABY_PREF_TYPE, Context.MODE_PRIVATE).edit();
+        String updateBaby = gson.toJson(baby);
+        edit.putString(Constants.BABY_DATA, updateBaby).commit();
+    }
+
 }

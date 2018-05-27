@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    // dont change the order in the array both arrays need to be in the same order
+    <array name="background_images">
+        <item>@drawable/android_fox_popup</item>
+        <item>@drawable/android_elephant_popup</item>
+        <item>@drawable/android_pelican_popup</item>
+    </array>
+
+    <array name="placeholder_images">
+        <item>@drawable/default_place_holder_green</item>
+        <item>@drawable/default_place_holder_yellow</item>
+        <item>@drawable/default_place_holder_blue</item>
+    </array>
+
+
+    <array name="camera_images">
+        <item>@drawable/camera_icon_green</item>
+        <item>@drawable/camera_icon_yellow</item>
+        <item>@drawable/camera_icon_blue</item>
+    </array>
+</resources>
